@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:padding="8dp">
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="RepoNameThatCanBeFairlyLongInSomeInstances"/>
+
+    <TextView
+        android:id="@+id/descriptionTextView"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        tools:text="Description of the Repository that can be pretty long too. You never know what the user might type."/>
+
+</LinearLayout>
