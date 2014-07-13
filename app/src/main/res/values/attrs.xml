@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomTabBarView">
+        <attr name="stripColor" format="color" />
+        <attr name="stripHeight" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="CustomTabView">
+        <attr name="tabIcon" format="integer" />
+    </declare-styleable>
+</resources>
