@@ -1,14 +1,17 @@
 package com.jeffinmadison.githubexample.ui.gist;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.ListFragment;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jeffinmadison.githubexample.datarequester.GitHubRestRequester;
+import com.jeffinmadison.githubexample.loaderwrapper.AbstractAsyncTaskLoader;
+import com.jeffinmadison.githubexample.loaderwrapper.WrappedLoaderCallbacks;
+import com.jeffinmadison.githubexample.loaderwrapper.WrappedLoaderResult;
 import com.jeffinmadison.githubexample.model.GitHubGist;
 
 import java.util.ArrayList;
@@ -18,10 +21,11 @@ import java.util.List;
  * Created by Jeff on 7/8/2014.
  * Copyright JeffInMadison.com 2014
  */
-public class GitHubGistListFragment extends ListFragment {
+public class GitHubGistListFragment extends ListFragment implements WrappedLoaderCallbacks<List<GitHubGist>> {
     private static final String TAG = GitHubGistListFragment.class.getSimpleName();
 
     private static final String ARG_USERNAME = "ARG_USERNAME";
+    private static final int ID_LOADER_GIST = 102;
 
     List<GitHubGist> mHubGistList;
     GitHubGistArrayAdapter mArrayAdapter;
@@ -55,7 +59,7 @@ public class GitHubGistListFragment extends ListFragment {
         super.onViewCreated(view, savedInstanceState);
         setEmptyText("no gists to display");
         setListAdapter(mArrayAdapter);
-        retrieveList();
+        getLoaderManager().initLoader(ID_LOADER_GIST, null, this);
     }
 
     @Override
@@ -69,26 +73,29 @@ public class GitHubGistListFragment extends ListFragment {
         super.setUserVisibleHint(isVisibleToUser);
     }
 
-    private void retrieveList() {
-        new AsyncTask<Void,Void,Void>() {
-
+    @Override
+    public Loader<WrappedLoaderResult<List<GitHubGist>>> onCreateLoader(final int id, final Bundle args) {
+        setListShown(false);
+        return new AbstractAsyncTaskLoader<List<GitHubGist>>(getActivity()) {
             @Override
-            protected void onPreExecute() {
-                setListShown(false);
-                super.onPreExecute();
+            public List<GitHubGist> load() throws Exception {
+                return GitHubRestRequester.getInstance().getGistList(getActivity(), mUsername);
             }
+        };
+    }
 
-            @Override
-            protected Void doInBackground(final Void... params) {
-                SystemClock.sleep(3000);
-                return null;
-            }
+    @Override
+    public void onLoadFinished(final Loader<WrappedLoaderResult<List<GitHubGist>>> loader, final WrappedLoaderResult<List<GitHubGist>> data) {
+        setListShown(true);
+        if (!data.hasException()) {
+            mHubGistList.clear();
+            mHubGistList.addAll(data.getWrappedData());
+            mArrayAdapter.notifyDataSetChanged();
+        }
+    }
 
-            @Override
-            protected void onPostExecute(final Void aVoid) {
-                setListShown(true);
-                super.onPostExecute(aVoid);
-            }
-        }.execute(null,null,null);
+    @Override
+    public void onLoaderReset(final Loader<WrappedLoaderResult<List<GitHubGist>>> loader) {
+
     }
 }

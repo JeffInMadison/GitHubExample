@@ -24,7 +24,7 @@ public class GitHubRepositoryListFragment extends ListFragment implements Wrappe
     private static final String TAG = GitHubRepositoryListFragment.class.getSimpleName();
 
     private static final String ARG_USERNAME = "ARG_USERNAME";
-    private static final int LOADER_ID = 101;
+    private static final int ID_LOADER_REPO = 101;
 
     List<GitHubRepository> mGitHubRepositoryList;
     GitHubRepositoryArrayAdapter mArrayAdapter;
@@ -61,7 +61,7 @@ public class GitHubRepositoryListFragment extends ListFragment implements Wrappe
         super.onViewCreated(view, savedInstanceState);
         setEmptyText("no repositories to display");
         setListAdapter(mArrayAdapter);
-        getLoaderManager().initLoader(LOADER_ID, null, this);
+        getLoaderManager().initLoader(ID_LOADER_REPO, null, this);
     }
 
     @Override
