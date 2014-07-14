@@ -5,6 +5,7 @@ import android.content.Context;
 import com.jeffinmadison.githubexample.model.GitHubEvent;
 import com.jeffinmadison.githubexample.model.GitHubGist;
 import com.jeffinmadison.githubexample.model.GitHubRepository;
+import com.jeffinmadison.githubexample.model.GitHubUser;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.util.List;
@@ -46,6 +47,12 @@ public class GitHubRestRequester {
 
         @GET("/users/{user}/events")
         void listEvents(@Path("user") String user, Callback<List<GitHubEvent>> callback);
+
+        @GET("/users/{user}")
+        void getUser(@Path("user") String user, Callback<GitHubUser> callback);
+
+        @GET("/users/{user}/events")
+        GitHubUser getUser(@Path("user") String user);
 
     }
 
@@ -110,4 +117,13 @@ public class GitHubRestRequester {
     public static void getGistEvents(Context context, String username, Callback<List<GitHubEvent>> callback) {
         mRestEndpoint.listEvents(username, callback);
     }
+
+    public static GitHubUser getUser(Context context, String username) {
+        return mRestEndpoint.getUser(username);
+    }
+
+    public static void getUser(Context context, String username, Callback<GitHubUser> callback) {
+        mRestEndpoint.getUser(username, callback);
+    }
+
 }

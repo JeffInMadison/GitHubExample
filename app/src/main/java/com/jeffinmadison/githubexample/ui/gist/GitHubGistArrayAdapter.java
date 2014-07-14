@@ -9,8 +9,10 @@ import android.widget.TextView;
 
 import com.jeffinmadison.githubexample.R;
 import com.jeffinmadison.githubexample.model.GitHubGist;
+import com.jeffinmadison.githubexample.model.GitHubGistFile;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Jeff on 7/8/2014.
@@ -31,22 +33,34 @@ public class GitHubGistArrayAdapter extends ArrayAdapter<GitHubGist> {
             assert convertView != null;
 
             ViewHolder viewHolder = new ViewHolder();
-            viewHolder.filesTextView = (TextView) convertView.findViewById(R.id.filesTextView);
+            viewHolder.fileNameTextView = (TextView) convertView.findViewById(R.id.fileNameTextView);
             viewHolder.descriptionTextView = (TextView) convertView.findViewById(R.id.descriptionTextView);
+            viewHolder.documentCountTextView = (TextView) convertView.findViewById(R.id.documentCountTextView);
+            viewHolder.commentCountTextView = (TextView) convertView.findViewById(R.id.commentCountTextView);
 
             convertView.setTag(viewHolder);
         }
         GitHubGist gitHubGist = getItem(position);
+        String fileName = "";
+        int fileCount = 1;
         final ViewHolder viewHolder = (ViewHolder) convertView.getTag();
-        String filesCount = String.format("File(s): %d", gitHubGist.getFiles().size());
-        viewHolder.filesTextView.setText(filesCount);
+        if (!gitHubGist.getFiles().isEmpty()) {
+            Map<String, GitHubGistFile> map = gitHubGist.getFiles();
+            fileCount = map.size();
+            Map.Entry<String, GitHubGistFile> set = map.entrySet().iterator().next();
+            fileName = set.getValue().getFilename();
+        }
+        viewHolder.fileNameTextView.setText(fileName);
+        viewHolder.documentCountTextView.setText(String.valueOf(fileCount));
         viewHolder.descriptionTextView.setText(gitHubGist.getDescription());
-
+        viewHolder.commentCountTextView.setText(String.valueOf(gitHubGist.getComments()));
         return convertView;
     }
 
     private class ViewHolder {
-        TextView filesTextView;
+        TextView fileNameTextView;
         TextView descriptionTextView;
+        TextView documentCountTextView;
+        TextView commentCountTextView;
     }
 }

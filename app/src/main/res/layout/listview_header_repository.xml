@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/AliceBlue">
+
+    <ImageView
+        android:id="@+id/gravatarImageView"
+        android:layout_width="@dimen/repository_header_height"
+        android:layout_height="@dimen/repository_header_height"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="4dp"
+        tools:background="@color/CornflowerBlue"/>
+
+    <TextView
+        android:id="@+id/repoOwnerTextView"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gravatarImageView"
+        android:paddingLeft="8dp"
+        android:textColor="@color/GitHubBlue"
+        tools:text="JeffInMadison"/>
+
+    <LinearLayout
+        android:id="@+id/usernameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gravatarImageView"
+        android:layout_below="@id/repoOwnerTextView"
+        android:paddingLeft="4dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Owner:"/>
+
+        <TextView
+            android:id="@+id/usernameTextView"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:ellipsize="end"
+            tools:text="The Quick Brown Fox Jumped Over The Lazy Dog"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/companyLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gravatarImageView"
+        android:layout_below="@id/usernameLayout"
+        android:paddingLeft="4dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Company:"/>
+
+        <TextView
+            android:id="@+id/companyTextView"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/gravatarImageView"
+            android:layout_below="@id/usernameTextView"
+            android:paddingLeft="8dp"
+            android:ellipsize="end"
+            tools:text="The Quick Brown Fox Jumped Over The Lazy Dog"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

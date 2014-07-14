@@ -6,29 +6,44 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.jeffinmadison.githubexample.R;
 import com.jeffinmadison.githubexample.datarequester.GitHubRestRequester;
 import com.jeffinmadison.githubexample.loaderwrapper.AbstractAsyncTaskLoader;
 import com.jeffinmadison.githubexample.loaderwrapper.WrappedLoaderCallbacks;
 import com.jeffinmadison.githubexample.loaderwrapper.WrappedLoaderResult;
 import com.jeffinmadison.githubexample.model.GitHubRepository;
+import com.jeffinmadison.githubexample.model.GitHubUser;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by Jeff on 7/8/2014.
  * Copyright JeffInMadison.com 2014
  */
-public class GitHubRepositoryListFragment extends ListFragment implements WrappedLoaderCallbacks<List<GitHubRepository>> {
+public class GitHubRepositoryListFragment extends ListFragment implements WrappedLoaderCallbacks<List<GitHubRepository>>, Callback<GitHubUser> {
     private static final String TAG = GitHubRepositoryListFragment.class.getSimpleName();
 
     private static final String ARG_USERNAME = "ARG_USERNAME";
     private static final int ID_LOADER_REPO = 101;
 
+    GitHubUser mGitHubUser = null;
     List<GitHubRepository> mGitHubRepositoryList;
     GitHubRepositoryArrayAdapter mArrayAdapter;
     private String mUsername;
+    private View mHeaderView;
+    private ImageView mUserImageView;
+    private TextView mRepoOwnerTextView;
+    private TextView mUserNameTextView;
+    private TextView mCompanyTextView;
 
     public GitHubRepositoryListFragment() {}
 
@@ -43,8 +58,14 @@ public class GitHubRepositoryListFragment extends ListFragment implements Wrappe
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // retaining the instance skips the onCreate/onDestroy for config changes and allows you
+        // to put stuff in onCreate that you only want to happen once.
+        setRetainInstance(true);
+
         if (getArguments() != null) {
             mUsername = getArguments().getString(ARG_USERNAME);
+            // go off and get the User's info
+            GitHubRestRequester.getInstance().getUser(getActivity(), mUsername, this);
         }
         mGitHubRepositoryList = new ArrayList<GitHubRepository>();
         mArrayAdapter = new GitHubRepositoryArrayAdapter(getActivity(), mGitHubRepositoryList);
@@ -59,9 +80,58 @@ public class GitHubRepositoryListFragment extends ListFragment implements Wrappe
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setEmptyText("no repositories to display");
+        if (mHeaderView == null) {
+            mHeaderView = View.inflate(getActivity(), R.layout.listview_header_repository, null);
+        }
+        // gather controls from headerView
+        mRepoOwnerTextView = (TextView) mHeaderView.findViewById(R.id.repoOwnerTextView);
+        mUserNameTextView = (TextView) mHeaderView.findViewById(R.id.usernameTextView);
+        mCompanyTextView = (TextView) mHeaderView.findViewById(R.id.companyTextView);
+        mUserImageView = (ImageView) mHeaderView.findViewById(R.id.gravatarImageView);
+        getListView().addHeaderView(mHeaderView);
+
+        mRepoOwnerTextView.setText(mUsername);
+        if (mGitHubUser != null) {
+            mUserNameTextView.setText(mGitHubUser.getName());
+            mCompanyTextView.setText(mGitHubUser.getCompany());
+            Picasso.with(getActivity())
+                    .load(mGitHubUser.getAvatarUrl())
+                    .into(mUserImageView);
+        }
+
         setListAdapter(mArrayAdapter);
+
+        setEmptyText(String.format("No repositories to display for GitHub login: %s", mUsername));
         getLoaderManager().initLoader(ID_LOADER_REPO, null, this);
+    }
+
+    @Override
+    public void success(final GitHubUser gitHubUser, final Response response) {
+        mGitHubUser = gitHubUser;
+
+        // TODO figure this out: I thought this returned an ran on the main thread...
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mUserImageView != null) {
+                    float dimen = getResources().getDimension(R.dimen.repository_header_height);
+                    Picasso.with(getActivity())
+                            .load(mGitHubUser.getAvatarUrl())
+                            .into(mUserImageView);
+                }
+                if (mUserNameTextView != null) {
+                    mUserNameTextView.setText(mGitHubUser.getName());
+                }
+                if (mCompanyTextView != null) {
+                    mCompanyTextView.setText(mGitHubUser.getCompany());
+                }
+            }
+        });
+    }
+
+    @Override
+    public void failure(final RetrofitError error) {
+
     }
 
     @Override

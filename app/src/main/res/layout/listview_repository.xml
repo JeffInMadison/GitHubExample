@@ -12,6 +12,7 @@
         android:textAppearance="?android:textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/GitHubBlue"
         tools:text="RepoNameThatCanBeFairlyLongInSomeInstances"/>
 
     <TextView
@@ -19,6 +20,7 @@
         android:textAppearance="?android:textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
         android:ellipsize="end"
         tools:text="Description of the Repository that can be pretty long too. You never know what the user might type."/>
 

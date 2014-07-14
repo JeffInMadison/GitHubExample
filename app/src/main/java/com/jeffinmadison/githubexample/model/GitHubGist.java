@@ -20,6 +20,9 @@ public class GitHubGist {
     @SerializedName("description")
     private String mDescription;
 
+    @SerializedName("comments")
+    private int mComments;
+
     @SerializedName("owner")
     private GitHubOwner mOwner;
 
@@ -47,6 +50,14 @@ public class GitHubGist {
 
     public void setDescription(final String description) {
         mDescription = description;
+    }
+
+    public int getComments() {
+        return mComments;
+    }
+
+    public void setComments(final int comments) {
+        mComments = comments;
     }
 
     public GitHubOwner getOwner() {
