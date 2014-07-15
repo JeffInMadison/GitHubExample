@@ -14,6 +14,7 @@ Some of the things it shows off:
  
 
 TODO:
+ - Now that GreenHouseCI.com will run test, setup some unit and instrumented tests as examples.
  - None of the lists handle when gettting list fails. Either update Empty text or show Alert Dialog
  - Add some UI to enable user to change username being loaded.
  - Add mechanism to write through sqllite to persist when no data connection is available.
