@@ -19,4 +19,5 @@ TODO:
  - Add mechanism to write through sqllite to persist when no data connection is available.
  - Update Settings page (its stock one you get when using Android Studio to add one).
  - Add UI elements for forks/commits/comments/edits.
+ - Utilize header info coming back from GitHub API to manage paging and number of elements left to pull.
  
