@@ -14,6 +14,7 @@ Some of the things it shows off:
  
 
 TODO:
+ - None of the lists handle when gettting list fails. Either update Empty text or show Alert Dialog
  - Add some UI to enable user to change username being loaded.
  - Add mechanism to write through sqllite to persist when no data connection is available.
  - Update Settings page (its stock one you get when using Android Studio to add one).
