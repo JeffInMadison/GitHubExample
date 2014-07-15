@@ -88,6 +88,7 @@ public class GitHubRepositoryListFragment extends SwipeRefreshListFragment imple
         setListAdapter(mArrayAdapter);
 
         setEmptyText(String.format("No repositories to display for GitHub login: %s", mUsername));
+        setListShown(false);
         getLoaderManager().initLoader(ID_LOADER_REPO, null, mGitHubRepositoryLoaderWrapper);
         getLoaderManager().initLoader(ID_LOADER_USER, null, mGitHubUserLoaderWrapper);
     }
@@ -109,7 +110,6 @@ public class GitHubRepositoryListFragment extends SwipeRefreshListFragment imple
 
         @Override
         public Loader<WrappedLoaderResult<List<GitHubRepository>>> onCreateLoader(final int id, final Bundle args) {
-            setListShown(false);
             return new AbstractAsyncTaskLoader<List<GitHubRepository>>(getActivity()) {
                 @Override
                 public List<GitHubRepository> load() throws Exception {

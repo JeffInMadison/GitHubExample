@@ -27,7 +27,7 @@ public class GitHubEventArrayAdapter extends ArrayAdapter<GitHubEvent> {
     public View getView(final int position, View convertView, final ViewGroup parent) {
         if (convertView == null) {
             LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-            convertView = layoutInflater.inflate(R.layout.listview_gist, parent, false);
+            convertView = layoutInflater.inflate(R.layout.listview_event, parent, false);
             assert convertView != null;
 
             ViewHolder viewHolder = new ViewHolder();

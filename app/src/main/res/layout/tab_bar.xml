@@ -11,21 +11,21 @@
     tools:context=".ui.MainActivity">
 
     <com.jeffinmadison.githubexample.ui.customtabview.CustomTabView
-        android:id="@+id/entry"
+        android:id="@+id/repos"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center"
         custom:tabIcon="@drawable/ic_repo"/>
 
     <com.jeffinmadison.githubexample.ui.customtabview.CustomTabView
-        android:id="@+id/graph"
+        android:id="@+id/gists"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center"
         custom:tabIcon="@drawable/ic_gist"/>
 
     <com.jeffinmadison.githubexample.ui.customtabview.CustomTabView
-        android:id="@+id/misc"
+        android:id="@+id/events"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center"

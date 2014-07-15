@@ -51,15 +51,6 @@ public class GitHubGistListFragment extends SwipeRefreshListFragment implements 
         }
         mHubGistList = new ArrayList<GitHubGist>();
         mArrayAdapter = new GitHubGistArrayAdapter(getActivity(), mHubGistList);
-        setRetainInstance(true);
-    }
-
-    @Override
-    public void onViewCreated(final View view, final Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setEmptyText("no gists to display");
-        setListAdapter(mArrayAdapter);
-        getLoaderManager().initLoader(ID_LOADER_GIST, null, this);
     }
 
     @Override
@@ -70,8 +61,11 @@ public class GitHubGistListFragment extends SwipeRefreshListFragment implements 
     }
 
     @Override
-    public void setUserVisibleHint(final boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
+    public void onViewCreated(final View view, final Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setEmptyText("no gists to display");
+        setListAdapter(mArrayAdapter);
+        getLoaderManager().initLoader(ID_LOADER_GIST, null, this);
     }
 
     @Override

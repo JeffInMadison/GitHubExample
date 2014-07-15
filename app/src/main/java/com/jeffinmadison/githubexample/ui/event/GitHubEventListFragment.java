@@ -1,9 +1,7 @@
 package com.jeffinmadison.githubexample.ui.event;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.v4.app.Fragment;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,27 +11,29 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-import com.jeffinmadison.githubexample.R;
+import com.jeffinmadison.githubexample.datarequester.GitHubRestRequester;
+import com.jeffinmadison.githubexample.loaderwrapper.AbstractAsyncTaskLoader;
+import com.jeffinmadison.githubexample.loaderwrapper.WrappedLoaderCallbacks;
+import com.jeffinmadison.githubexample.loaderwrapper.WrappedLoaderResult;
 import com.jeffinmadison.githubexample.model.GitHubEvent;
+import com.jeffinmadison.githubexample.ui.fragment.SwipeRefreshListFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Jeff on 7/8/2014.
  * Copyright JeffInMadison.com 2014
  */
-public class GitHubEventListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class GitHubEventListFragment extends SwipeRefreshListFragment implements SwipeRefreshLayout.OnRefreshListener, WrappedLoaderCallbacks<List<GitHubEvent>> {
     private static final String TAG = GitHubEventListFragment.class.getSimpleName();
 
     private static final String ARG_USERNAME = "ARG_USERNAME";
-    private static final int PROGRESS_VIEW = 0;
-    private static final int LIST_VIEW = 1;
-
-    private static final int LIST_SHOWN = 0;
-    private static final int EMPTY_SHOWN = 1;
+    private static final int ID_LOADER_EVENT = 104;
 
     ArrayList<GitHubEvent> mGitHubEventArrayList;
     GitHubEventArrayAdapter mArrayAdapter;
+
     private String mUsername;
     private ViewSwitcher mProgressViewSwitcher;
     private ViewSwitcher mListViewSwitcher;
@@ -60,74 +60,54 @@ public class GitHubEventListFragment extends Fragment implements SwipeRefreshLay
         }
         mGitHubEventArrayList = new ArrayList<GitHubEvent>();
         mArrayAdapter = new GitHubEventArrayAdapter(getActivity(), mGitHubEventArrayList);
-        retrieveList();
-    }
-
-    @Override
-    public void onViewCreated(final View view, final Bundle savedInstanceState) {
-        Log.i(TAG, "onViewCreated");
-        super.onViewCreated(view, savedInstanceState);
-        mEmptyTextView.setText("no Events to display");
-        mListView.setAdapter(mArrayAdapter);
     }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-        Log.i(TAG, "onCreateView");
-        setRetainInstance(true);
-        View fragmentView = inflater.inflate(R.layout.list_content, container, false);
-        mProgressViewSwitcher = (ViewSwitcher) fragmentView.findViewById(R.id.viewSwitcher);
-        mListViewSwitcher = (ViewSwitcher) fragmentView.findViewById(R.id.listContainer);
-        mListView = (ListView) fragmentView.findViewById(android.R.id.list);
-        mEmptyTextView = (TextView) fragmentView.findViewById(R.id.internalEmpty);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) fragmentView.findViewById(R.id.swipeContainer);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorScheme(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+        View fragmentView = super.onCreateView(inflater, container, savedInstanceState);
+
+        setOnRefreshListener(this);
         return fragmentView;
     }
 
-    private void retrieveList() {
-        new AsyncTask<Void,Void,Void>() {
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                if (mProgressViewSwitcher != null) {
-                    mProgressViewSwitcher.setDisplayedChild(PROGRESS_VIEW);
-                }
-            }
-
-            @Override
-            protected Void doInBackground(final Void... params) {
-                SystemClock.sleep(3000);
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(final Void aVoid) {
-                if (mProgressViewSwitcher != null) {
-                    mProgressViewSwitcher.setDisplayedChild(LIST_VIEW);
-                }
-
-                if (mListViewSwitcher != null) {
-                    if (mGitHubEventArrayList.size() > 0) {
-                        mListViewSwitcher.setDisplayedChild(LIST_SHOWN);
-                    } else {
-                        mListViewSwitcher.setDisplayedChild(EMPTY_SHOWN);
-                    }
-                }
-                mSwipeRefreshLayout.setRefreshing(false);
-                super.onPostExecute(aVoid);
-            }
-        }.execute(null,null,null);
+    @Override
+    public void onViewCreated(final View view, final Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setEmptyText("no Events to display");
+        setListAdapter(mArrayAdapter);
+        getLoaderManager().initLoader(ID_LOADER_EVENT, null, this);
     }
 
     @Override
     public void onRefresh() {
-        mSwipeRefreshLayout.setRefreshing(true);
-        retrieveList();
+        setRefreshing(true);
+        getLoaderManager().restartLoader(ID_LOADER_EVENT, null, this);
     }
+
+    @Override
+    public Loader<WrappedLoaderResult<List<GitHubEvent>>> onCreateLoader(final int id, final Bundle args) {
+        setListShown(false);
+        return new AbstractAsyncTaskLoader<List<GitHubEvent>>(getActivity()) {
+            @Override
+            public List<GitHubEvent> load() throws Exception {
+                return GitHubRestRequester.getInstance().getGistEvents(mUsername);
+            }
+        };
+
+    }
+
+    @Override
+    public void onLoadFinished(final Loader<WrappedLoaderResult<List<GitHubEvent>>> loader, final WrappedLoaderResult<List<GitHubEvent>> data) {
+        setListShown(true);
+        setRefreshing(false);
+        if (!data.hasException()) {
+            mGitHubEventArrayList.clear();
+            mGitHubEventArrayList.addAll(data.getWrappedData());
+            mArrayAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(final Loader<WrappedLoaderResult<List<GitHubEvent>>> loader) { }
+
 }
