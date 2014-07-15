@@ -2,7 +2,6 @@ package com.jeffinmadison.githubexample.ui.customtabview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -101,7 +100,8 @@ public class CustomTabView extends LinearLayout {
         }
     }
 
-    private OnLongClickListener mOnLongClickListener = new OnLongClickListener() {
+    private OnLongClickListener mOnLongClickListener =
+            new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
             final int[] screenPos = new int[2];

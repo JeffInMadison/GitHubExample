@@ -1,8 +1,8 @@
 package com.jeffinmadison.githubexample.ui.gist;
 
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +13,7 @@ import com.jeffinmadison.githubexample.loaderwrapper.AbstractAsyncTaskLoader;
 import com.jeffinmadison.githubexample.loaderwrapper.WrappedLoaderCallbacks;
 import com.jeffinmadison.githubexample.loaderwrapper.WrappedLoaderResult;
 import com.jeffinmadison.githubexample.model.GitHubGist;
+import com.jeffinmadison.githubexample.ui.fragment.SwipeRefreshListFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.List;
  * Created by Jeff on 7/8/2014.
  * Copyright JeffInMadison.com 2014
  */
-public class GitHubGistListFragment extends ListFragment implements WrappedLoaderCallbacks<List<GitHubGist>> {
+public class GitHubGistListFragment extends SwipeRefreshListFragment implements WrappedLoaderCallbacks<List<GitHubGist>>, SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = GitHubGistListFragment.class.getSimpleName();
 
     private static final String ARG_USERNAME = "ARG_USERNAME";
@@ -55,7 +56,6 @@ public class GitHubGistListFragment extends ListFragment implements WrappedLoade
 
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
-        Log.i(TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         setEmptyText("no gists to display");
         setListAdapter(mArrayAdapter);
@@ -64,8 +64,9 @@ public class GitHubGistListFragment extends ListFragment implements WrappedLoade
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-        Log.i(TAG, "onCreateView");
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        setOnRefreshListener(this);
+        return view;
     }
 
     @Override
@@ -79,7 +80,7 @@ public class GitHubGistListFragment extends ListFragment implements WrappedLoade
         return new AbstractAsyncTaskLoader<List<GitHubGist>>(getActivity()) {
             @Override
             public List<GitHubGist> load() throws Exception {
-                return GitHubRestRequester.getInstance().getGistList(getActivity(), mUsername);
+                return GitHubRestRequester.getInstance().getGistList(mUsername);
             }
         };
     }
@@ -87,6 +88,7 @@ public class GitHubGistListFragment extends ListFragment implements WrappedLoade
     @Override
     public void onLoadFinished(final Loader<WrappedLoaderResult<List<GitHubGist>>> loader, final WrappedLoaderResult<List<GitHubGist>> data) {
         setListShown(true);
+        setRefreshing(false);
         if (!data.hasException()) {
             mHubGistList.clear();
             mHubGistList.addAll(data.getWrappedData());
@@ -96,6 +98,13 @@ public class GitHubGistListFragment extends ListFragment implements WrappedLoade
 
     @Override
     public void onLoaderReset(final Loader<WrappedLoaderResult<List<GitHubGist>>> loader) {
+
+    }
+
+    @Override
+    public void onRefresh() {
+        setRefreshing(true);
+        getLoaderManager().restartLoader(ID_LOADER_GIST, null, this);
 
     }
 }

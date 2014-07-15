@@ -1,30 +1,29 @@
 package com.jeffinmadison.githubexample.ui.main;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.jeffinmadison.githubexample.R;
 import com.jeffinmadison.githubexample.ui.customtabview.CustomTabBarView;
+import com.jeffinmadison.githubexample.ui.customtabview.CustomViewTabListener;
 import com.jeffinmadison.githubexample.ui.event.GitHubEventListFragment;
 import com.jeffinmadison.githubexample.ui.gist.GitHubGistListFragment;
 import com.jeffinmadison.githubexample.ui.repository.GitHubRepositoryListFragment;
+import com.jeffinmadison.githubexample.ui.settings.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
+public class MainActivity extends ActionBarActivity implements CustomViewTabListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     SectionsPagerAdapter mSectionsPagerAdapter;
@@ -65,6 +64,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         actionBar.setCustomView(R.layout.tab_bar);
 
         mCustomTabBarView = (CustomTabBarView) actionBar.getCustomView();
+        mCustomTabBarView.setOnTabViewSelectedListener(this);
         mCustomTabBarView.setSelectedTab(0);
 
         mFragmentList = new ArrayList<Fragment>();
@@ -85,24 +85,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in
-        // the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    public void onTabSelected(final int position) {
+        if (mViewPager.getCurrentItem() != position) {
+            mViewPager.setCurrentItem(position);
+        }
     }
 
     /**

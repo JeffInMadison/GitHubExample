@@ -11,22 +11,45 @@ import android.widget.LinearLayout;
 
 import com.jeffinmadison.githubexample.R;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Jeff on 5/22/2014.
  * Copyright JeffInMadison 2014
  */
 public class CustomTabBarView extends LinearLayout {
+    private static final String TAG = CustomTabBarView.class.getSimpleName();
+
     private static final int DEFAULT_STRIP_HEIGHT = 6;
 
+    Map<View,Integer> map = new HashMap<View,Integer>();
     public final Paint mPaint;
     private int mStripColor;
     private float mStripHeight;
     private float mOffset;
     private int mSelectedTab = -1;
 
-//    public CustomTabBarView(Context context) {
-//        this(context, null);
-//    }
+    public void setOnTabViewSelectedListener(final CustomViewTabListener onCustomViewTabListener) {
+        if (onCustomViewTabListener == null) {
+            return;
+        }
+        for (int ii = 0; ii < getChildCount(); ii++) {
+            if (getChildAt(ii) instanceof CustomTabView) {
+                final int positionFinal = ii;
+                getChildAt(ii).setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        onCustomViewTabListener.onTabSelected(positionFinal);
+                    }
+                });
+            }
+        }
+    }
+
+    public CustomTabBarView(Context context) {
+        this(context, null);
+    }
 
     public CustomTabBarView(Context context, AttributeSet attrs) {
         this(context, attrs, android.R.attr.actionBarTabBarStyle);

@@ -1,7 +1,5 @@
 package com.jeffinmadison.githubexample.datarequester;
 
-import android.content.Context;
-
 import com.jeffinmadison.githubexample.model.GitHubEvent;
 import com.jeffinmadison.githubexample.model.GitHubGist;
 import com.jeffinmadison.githubexample.model.GitHubRepository;
@@ -51,9 +49,8 @@ public class GitHubRestRequester {
         @GET("/users/{user}")
         void getUser(@Path("user") String user, Callback<GitHubUser> callback);
 
-        @GET("/users/{user}/events")
+        @GET("/users/{user}")
         GitHubUser getUser(@Path("user") String user);
-
     }
 
     private static GitHubEndpoints mRestEndpoint;
@@ -94,36 +91,35 @@ public class GitHubRestRequester {
 //        }
 //    }
 
-    public static List<GitHubRepository> getRepositoryList(Context context, String username) {
+    public List<GitHubRepository> getRepositoryList(String username) {
         return mRestEndpoint.listRepos(username);
     }
 
-    public static void getRepositoryList(Context context, String username, Callback<List<GitHubRepository>> callback) {
+    public void getRepositoryList(String username, Callback<List<GitHubRepository>> callback) {
         mRestEndpoint.listRepos(username, callback);
     }
 
-    public static List<GitHubGist> getGistList(Context context, String username) {
+    public List<GitHubGist> getGistList(String username) {
         return mRestEndpoint.listGists(username);
     }
 
-    public static void getGistList(Context context, String username, Callback<List<GitHubGist>> callback) {
+    public void getGistList(String username, Callback<List<GitHubGist>> callback) {
         mRestEndpoint.listGists(username, callback);
     }
 
-    public static List<GitHubEvent> getGistEvents(Context context, String username) {
+    public List<GitHubEvent> getGistEvents(String username) {
         return mRestEndpoint.listEvents(username);
     }
 
-    public static void getGistEvents(Context context, String username, Callback<List<GitHubEvent>> callback) {
+    public void getGistEvents(String username, Callback<List<GitHubEvent>> callback) {
         mRestEndpoint.listEvents(username, callback);
     }
 
-    public static GitHubUser getUser(Context context, String username) {
+    public GitHubUser getUser(String username) {
         return mRestEndpoint.getUser(username);
     }
 
-    public static void getUser(Context context, String username, Callback<GitHubUser> callback) {
+    public void getUser(String username, Callback<GitHubUser> callback) {
         mRestEndpoint.getUser(username, callback);
     }
-
 }
